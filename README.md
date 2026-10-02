@@ -1,61 +1,272 @@
-🚖 Uber Data Engineering Platform
-📌 Project Overview
-This project demonstrates an end-to-end Data Engineering pipeline built using modern cloud data engineering tools and Medallion Architecture.
+# 🚖 Uber Data Engineering Platform
 
-The pipeline ingests Uber trip datasets into Databricks using PySpark, transforms the data through Bronze, Silver, and Gold layers using dbt, and orchestrates the complete workflow using Apache Airflow running on Docker.
+An end-to-end **Data Engineering project** that demonstrates how raw Uber trip data can be ingested, transformed, validated, and organized into analytics-ready datasets using modern data engineering technologies.
 
-The project follows enterprise-level best practices including:
+The project follows **Medallion Architecture (Bronze, Silver, Gold)** and combines **Databricks, PySpark, Delta Lake, dbt, Apache Airflow, Docker, SQL, and Git** to build an automated and modular data pipeline.
 
-Medallion Architecture
-Modular dbt models
-Apache Airflow orchestration
-Data Quality Testing
-Dockerized deployment
-Databricks Unity Catalog
-Git Version Control
-🏗️ Architecture
+---
 
-Source CSV Files
-        │
-        ▼
-Databricks (PySpark)
-        │
-        ▼
-Bronze Layer
-        │
-        ▼
-Airflow DAG-1
-Bronze → Silver
-        │
-        ▼
-Silver Layer (dbt)
-        │
-        ▼
-Airflow DAG-2
-Silver → Gold
-        │
-        ▼
+## 📌 Project Overview
+
+The pipeline processes Uber trip datasets through multiple stages:
+
+**Source CSV Files → Databricks/PySpark → Bronze → Silver → Gold → Data Quality Validation**
+
+The complete workflow is orchestrated using **Apache Airflow**, while **dbt** is used for SQL-based transformations and testing.
+
+### Key Engineering Practices
+
+* Medallion Architecture
+* Modular dbt transformations
+* Apache Airflow orchestration
+* PySpark-based data processing
+* Delta Lake storage
+* Data quality testing
+* Dockerized development environment
+* Git/GitHub version control
+* Dimensional data modeling
+* Automated pipeline execution
+
+---
+
+# 🏗️ Architecture
+
+```text
+                 Source CSV Files
+                       │
+                       ▼
+              ┌─────────────────┐
+              │    Databricks   │
+              │     PySpark     │
+              └────────┬────────┘
+                       │
+                       ▼
+              ┌─────────────────┐
+              │  Bronze Layer   │
+              │  Raw Delta Data │
+              └────────┬────────┘
+                       │
+                 Airflow DAG
+                       │
+                       ▼
+              ┌─────────────────┐
+              │  Silver Layer   │
+              │ Cleaned &       │
+              │ Standardized    │
+              └────────┬────────┘
+                       │
+                 Airflow DAG
+                       │
+                       ▼
+              ┌─────────────────┐
+              │   Gold Layer    │
+              │ Facts &         │
+              │ Dimensions      │
+              └────────┬────────┘
+                       │
+                 Airflow DAG
+                       │
+                       ▼
+              ┌─────────────────┐
+              │ Data Quality    │
+              │   Validation    │
+              └─────────────────┘
+```
+
+---
+
+# ⚙️ Technology Stack
+
+| Technology         | Purpose                                  |
+| ------------------ | ---------------------------------------- |
+| **Python**         | Programming and pipeline logic           |
+| **PySpark**        | Distributed data processing              |
+| **Databricks**     | Data engineering and processing platform |
+| **Delta Lake**     | Reliable storage and table management    |
+| **dbt**            | SQL transformations and data modeling    |
+| **Apache Airflow** | Workflow orchestration                   |
+| **Docker**         | Containerized Airflow environment        |
+| **SQL**            | Data transformation and analysis         |
+| **Git & GitHub**   | Version control                          |
+
+---
+
+# 🏛️ Medallion Architecture
+
+The project follows the **Bronze → Silver → Gold** data architecture pattern.
+
+## 🥉 Bronze Layer
+
+The Bronze layer stores the raw source data with minimal transformation.
+
+### Responsibilities
+
+* Ingest source CSV files
+* Preserve source information
+* Store raw datasets
+* Create Delta tables
+* Maintain the initial structure of incoming data
+
+**Technology:** Databricks + PySpark + Delta Lake
+
+---
+
+## 🥈 Silver Layer
+
+The Silver layer converts raw data into clean and standardized datasets.
+
+### Transformations
+
+* Data cleansing
+* Data type conversion
+* Null handling
+* Standardization
+* Invalid-value handling
+* Column transformations
+* Business-rule preparation
+
+**Technology:** dbt + SQL
+
+---
+
+## 🥇 Gold Layer
+
+The Gold layer contains business-ready analytical datasets optimized for reporting and analysis.
+
+The model follows a dimensional data-modeling approach consisting of:
+
+### Dimension Tables
+
+* `dim_city`
+* `dim_vehicle_types`
+* `dim_vehicle_makes`
+* `dim_payment_methods`
+* `dim_ride_status`
+* `dim_cancellation_reasons`
+
+### Fact Table
+
+* `fact_trips`
+
+The `fact_trips` table stores measurable trip-level information and connects to the relevant dimension tables.
+
+---
+
+# 🔄 End-to-End Pipeline
+
+```text
+CSV Source Data
+      │
+      ▼
+Databricks + PySpark
+      │
+      ▼
+Bronze Delta Tables
+      │
+      ▼
+Airflow: Bronze → Silver
+      │
+      ▼
+dbt Staging Models
+      │
+      ▼
+Silver Layer
+      │
+      ▼
+Airflow: Silver → Gold
+      │
+      ▼
+dbt Dimension & Fact Models
+      │
+      ▼
 Gold Layer
-        │
-        ▼
-Airflow DAG-3
-Data Quality
-        │
-        ▼
-Master Pipeline DAG
+      │
+      ▼
+Airflow: Data Quality
+      │
+      ▼
+dbt Tests
+```
 
-⚙️ Tech Stack
-Technology	Usage
-Python	Programming
-PySpark	Data Processing
-Databricks	Data Engineering Platform
-Delta Lake	Storage Layer
-dbt	Data Transformation
-Apache Airflow	Workflow Orchestration
-Docker	Containerization
-SQL	Data Analysis
-Git & GitHub	Version Control
-📁 Project Structure
+---
+
+# 🌪️ Apache Airflow DAGs
+
+Apache Airflow is used to orchestrate the different stages of the pipeline.
+
+| DAG                 | Description                                                                 |
+| ------------------- | --------------------------------------------------------------------------- |
+| `bronze_to_silver`  | Executes dbt staging models and transforms Bronze data into Silver datasets |
+| `silver_to_gold`    | Executes dbt dimension and fact models to build the Gold layer              |
+| `gold_data_quality` | Executes dbt tests to validate Gold-layer datasets                          |
+| `master_pipeline`   | Coordinates the complete end-to-end workflow                                |
+
+### Master Pipeline
+
+The complete pipeline can be executed through the master DAG:
+
+```text
+Bronze → Silver → Gold → Data Quality
+```
+
+This reduces the need to manually execute individual pipeline stages.
+
+---
+
+# ✅ Data Quality
+
+Data quality checks are implemented using **dbt tests** to ensure that reliable data reaches the Gold layer.
+
+### Implemented Checks
+
+* Not-null validation
+* Primary-key validation
+* Relationship tests
+* Accepted-value validation
+* Schema validation
+* Source validation
+* Data consistency checks
+
+These tests help identify data-quality problems before datasets are used for analytical workloads.
+
+---
+
+# 📊 Gold Data Model
+
+The final analytical model contains:
+
+```text
+                    dim_city
+                       │
+                       │
+dim_vehicle_types ────┤
+                       │
+dim_vehicle_makes ────┤
+                       │
+dim_payment_methods ──┤
+                       │
+dim_ride_status ──────┤
+                       │
+dim_cancellation ─────┤
+                       │
+                       ▼
+                  fact_trips
+```
+
+The dimensional model allows analytical queries to combine trip-level metrics with descriptive information such as:
+
+* City
+* Vehicle type
+* Vehicle make
+* Payment method
+* Ride status
+* Cancellation reason
+
+---
+
+# 📁 Project Structure
+
+```text
 uber-data-platform/
 │
 ├── airflow/
@@ -82,151 +293,103 @@ uber-data-platform/
 │       ├── seeds/
 │       └── dbt_project.yml
 │
-├── screenshots/
+├── notebooks/
 │
 ├── architecture/
 │
-├── notebooks/
+├── screenshots/
 │
 ├── README.md
+│
 └── .gitignore
-🏛️ Medallion Architecture
-The project follows the Medallion Architecture.
+```
 
-Bronze Layer
-Raw data ingestion
-Stores source data without business transformations
-Built using Databricks and Delta Tables
-Silver Layer
-Data cleansing
-Standardization
-Data type conversion
-Null handling
-Business-ready staging tables
-Implemented using dbt.
+---
 
-Gold Layer
-Business-ready analytical tables.
+# 📸 Project Screenshots
 
-Contains:
+The repository contains screenshots demonstrating:
 
-Dimension Tables
-Fact Tables
-Optimized for reporting and analytics.
+### Airflow
 
-🔄 End-to-End Pipeline Flow
-Source CSV Files
-        │
-        ▼
-Databricks (PySpark)
-        │
-        ▼
-Bronze Layer (Delta Tables)
-        │
-        ▼
-Airflow DAG-1
-Bronze → Silver
-        │
-        ▼
-Silver Layer (dbt Staging Models)
-        │
-        ▼
-Airflow DAG-2
-Silver → Gold
-        │
-        ▼
-Gold Layer
-(Dimensions + Fact Tables)
-        │
-        ▼
-Airflow DAG-3
-Data Quality Validation (dbt test)
-        │
-        ▼
-Master Pipeline DAG
-🌪️ Airflow DAGs
-The project is orchestrated using Apache Airflow running inside Docker.
+* Bronze → Silver DAG
+* Silver → Gold DAG
+* Gold Data Quality DAG
+* Master Pipeline DAG
 
-DAG	Description
-bronze_to_silver	Executes dbt staging models to transform Bronze data into Silver
-silver_to_gold	Executes dbt dimension and fact models to populate Gold Layer
-gold_data_quality	Executes dbt tests to validate transformed datasets
-master_pipeline	Orchestrates the complete end-to-end pipeline
-✅ Data Quality Checks
-The project validates transformed datasets using dbt tests.
+### Databricks
 
-Implemented validations include:
+* Bronze layer
+* Silver layer
+* Gold layer
 
-Schema Validation
-Source Validation
-Not Null Checks
-Relationship Tests
-Accepted Values
-Primary Key Validation
-This ensures that only trusted and high-quality data reaches the Gold Layer.
+### Data Model
 
-📊 Final Data Model
-The final Gold Layer contains:
+* Fact tables
+* Dimension tables
+* Architecture diagrams
 
-Dimension Tables
-dim_city
-dim_vehicle_types
-dim_vehicle_makes
-dim_payment_methods
-dim_ride_status
-dim_cancellation_reasons
-Fact Table
-fact_trips
-These tables are optimized for reporting and analytical workloads.
+---
 
-📸 Project Screenshots
-Airflow
-Bronze → Silver DAG
-Silver → Gold DAG
-Gold Data Quality DAG
-Master Pipeline DAG
-Databricks
-Bronze Schema
-Silver Schema
-Gold Schema
-🚀 How to Run the Project
-1. Clone Repository
-git clone https://github.com/7798akash/uber-data-platform.git
-2. Start Airflow
-cd airflow
-docker compose up -d
-3. Verify dbt Connection
-dbt debug
-4. Execute Pipeline
-Run the Airflow DAGs in the following order:
+# 💼 Key Features
 
-Bronze → Silver
-Silver → Gold
-Gold Data Quality
-Or simply run:
+* End-to-end Data Engineering pipeline
+* Medallion Architecture
+* PySpark data processing
+* Databricks integration
+* Delta Lake storage
+* dbt-based transformations
+* Apache Airflow orchestration
+* Dockerized development environment
+* Dimensional data modeling
+* Data quality validation
+* Git/GitHub version control
 
-Master Pipeline DAG
-💼 Key Features
-End-to-End Data Engineering Pipeline
-Medallion Architecture (Bronze, Silver, Gold)
-Apache Airflow Orchestration
-dbt Transformations
-PySpark Data Processing
-Delta Lake Storage
-Databricks Unity Catalog
-Dockerized Airflow Environment
-Data Quality Validation using dbt Tests
-GitHub Version Control
-🔮 Future Enhancements
-Email Notifications
-Slack Alerts
-CI/CD Pipeline using GitHub Actions
-Incremental dbt Models
-Data Freshness Monitoring
-Power BI Dashboard Integration
-👨‍💻 Author
-Barin Ghosh
+---
 
-Data Engineer | PySpark | SQL | Azure | Databricks | Apache Airflow | dbt
+# 🔮 Future Enhancements
 
-⭐ If you found this project useful, consider giving it a star on GitHub.
+Potential future improvements include:
+
+* Email notifications for pipeline failures
+* Slack alerts
+* GitHub Actions CI/CD
+* Incremental dbt models
+* Data freshness monitoring
+* Pipeline failure monitoring
+* Power BI dashboard integration
+* Additional data-quality rules
+* Automated documentation generation
+
+---
+
+# 📚 What This Project Demonstrates
+
+This project demonstrates practical knowledge of:
+
+* ETL/ELT pipeline development
+* Data ingestion
+* Batch data processing
+* PySpark
+* SQL transformations
+* Data warehousing
+* Medallion Architecture
+* Dimensional modeling
+* Workflow orchestration
+* Data quality engineering
+* Containerization
+* Version control
+
+---
+
+# 👨‍💻 Author
+
+**Barin Ghosh**
+
+B.Tech Computer Science & Engineering | Data Engineering Enthusiast
+
+**Skills:** SQL | Python | PySpark | Databricks | Apache Airflow | dbt | Docker | Data Warehousing | Git
+
+---
+
+⭐ If you find this project useful, consider giving the repository a star.
