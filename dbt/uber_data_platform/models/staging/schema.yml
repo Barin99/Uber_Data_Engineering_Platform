@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: stg_trips
+    description: "Silver layer trips table"
+
+    columns:
+      - name: ride_id
+        description: "Unique Ride ID"
+        tests:
+          - unique
+          - not_null
+
+      - name: passenger_id
+        tests:
+          - not_null
+
+      - name: driver_id
+        tests:
+          - not_null
+
+      - name: pickup_timestamp
+        tests:
+          - not_null
+
+      - name: dropoff_timestamp
+        tests:
+          - not_null
+
+      - name: payment_method_id
+        tests:
+          - not_null
+
+      - name: ride_status_id
+        tests:
+          - not_null
