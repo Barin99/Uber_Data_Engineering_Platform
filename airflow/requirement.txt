@@ -1,0 +1,4 @@
+dbt-core==1.9.4
+dbt-databricks==1.9.2
+databricks-sql-connector==3.7.2
+apache-airflow-providers-databricks
