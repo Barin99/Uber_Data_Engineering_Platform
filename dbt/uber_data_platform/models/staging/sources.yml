@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: uber_data_platform
+    schema: bronze
+
+    tables:
+      - name: bulk_rides
+      - name: map_cancellation_reasons
+      - name: map_cities
+      - name: map_payment_methods
+      - name: map_ride_statuses
+      - name: map_vehicle_makes
+      - name: map_vehicle_types
